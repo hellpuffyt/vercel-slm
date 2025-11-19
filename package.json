@@ -1,0 +1,12 @@
+{
+  "name": "vercel-slm",
+  "version": "1.0.0",
+  "main": "api/detect.js",
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0",
+    "@sendgrid/mail": "^7.9.0",
+    "node-fetch": "^2.6.7",
+    "uuid": "^9.0.0"
+  }
+}

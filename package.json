@@ -4,7 +4,13 @@
   "main": "api/detect.js",
   "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.0",
-    "uuid": "^9.0.0"
-  }
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
 }

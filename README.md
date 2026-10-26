@@ -9,13 +9,26 @@ brute force, and can post alerts to a Discord-style webhook.
 
 [Case study ↗](https://hellpuff.dev/work/slm)
 
-<img src="docs/assets/overview.svg" width="100%" alt="Request flow diagram: a client POSTs a log line with an x-api-key header to /api/detect; the handler checks method, key and payload, runs four regex rules, returns 200 when nothing matches, and otherwise stores evidence, an incident row and a per-IP failed-login counter in Supabase, posts to the alert webhook on brute force or a critical finding, and returns 201.">
-
 **Status:** experimental and not production-ready. There is no tagged release yet (CHANGELOG has only an
 Unreleased section, and `package.json` still carries npm's default `1.0.0`). Detection is simple pattern
 matching, not a SIEM.
 
 **Requirements:** Node.js 20 or newer (CI tests 20, 22 and 24), a Supabase project, and a Vercel account to deploy.
+
+## Demo
+
+<img src="docs/screenshots/npm-test-handler-and-rules.png" width="100%" alt="Terminal capture of npm test: 13 passing tests covering the four rules, IP extraction, the 5-minute counter window, the API key check, payload limits, 405/401/400/500 responses, incident creation, brute-force alerting and failing closed without env vars.">
+
+*Terminal capture: `npm test` on the current code. The handler tests run `createHandler` against in-memory fakes for
+Supabase and the webhook; the `Handler exception` line is the deliberately failing fake database in the 500 test.*
+
+A capture of a live `/api/detect` deployment is not included: it needs a Supabase project and Vercel credentials.
+
+## How a request flows
+
+<img src="docs/assets/overview.svg" width="100%" alt="Request flow diagram: a client POSTs a log line with an x-api-key header to /api/detect; the handler checks method, key and payload, runs four regex rules, returns 200 when nothing matches, and otherwise stores evidence, an incident row and a per-IP failed-login counter in Supabase, posts to the alert webhook on brute force or a critical finding, and returns 201.">
+
+*Diagram of `api/detect.js` and `lib/detect-core.js`.*
 
 ## Example
 ```bash

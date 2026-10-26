@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" role="img" aria-labelledby="t d">
+  <title id="t">vercel-slm request flow</title>
+  <desc id="d">A client POSTs a log line to the /api/detect Vercel function. The handler checks the method, the x-api-key header and the payload, runs four regex rules from lib/detect-core.js, and returns 200 when nothing matches. On a match it uploads the raw message to the evidence bucket, inserts an incident row, updates a per-IP failed-login counter in a fixed 5-minute window, and posts to the alert webhook on brute force or a critical finding, then returns 201.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#A3AAA6"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3FBF8A"/></marker>
+  </defs>
+  <rect width="1200" height="480" fill="#0C0D0D"/>
+  <text x="40" y="48" fill="#EEEAE2" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="600">POST /api/detect: one log line in, stored incidents and alerts out</text>
+  <text x="40" y="74" fill="#A3AAA6" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="14">api/detect.js does the I/O; lib/detect-core.js holds the pure rules, payload parsing, window maths and key check.</text>
+
+  <g xml:space="preserve" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">
+    <!-- client -->
+    <rect x="40" y="120" width="150" height="150" rx="8" fill="#17191A" stroke="#2A2E2D"/>
+    <text x="56" y="148" fill="#EEEAE2" font-size="14">client</text>
+    <text x="56" y="176" fill="#A3AAA6" font-size="11">x-api-key</text>
+    <text x="56" y="196" fill="#A3AAA6" font-size="11">{ message,</text>
+    <text x="56" y="214" fill="#A3AAA6" font-size="11">  timestamp?,</text>
+    <text x="56" y="232" fill="#A3AAA6" font-size="11">  meta? }</text>
+
+    <!-- gate -->
+    <rect x="220" y="120" width="200" height="150" rx="8" fill="#17191A" stroke="#2A2E2D"/>
+    <text x="236" y="148" fill="#EEEAE2" font-size="14">handler checks</text>
+    <text x="236" y="176" fill="#A3AAA6" font-size="11">not POST      405</text>
+    <text x="236" y="196" fill="#A3AAA6" font-size="11">apiKeyMatches 401</text>
+    <text x="236" y="216" fill="#A3AAA6" font-size="11">&gt; 64 KiB      413</text>
+    <text x="236" y="236" fill="#A3AAA6" font-size="11">bad timestamp 400</text>
+
+    <!-- rules -->
+    <rect x="450" y="120" width="220" height="150" rx="8" fill="#17191A" stroke="#3FBF8A"/>
+    <text x="466" y="148" fill="#EEEAE2" font-size="14">detectRules</text>
+    <text x="466" y="176" fill="#A3AAA6" font-size="11">failed-login      medium</text>
+    <text x="466" y="196" fill="#A3AAA6" font-size="11">admin-access      high</text>
+    <text x="466" y="216" fill="#3FBF8A" font-size="11">sql-injection     critical</text>
+    <text x="466" y="236" fill="#A3AAA6" font-size="11">suspicious-UA     medium</text>
+
+    <!-- no findings -->
+    <rect x="720" y="120" width="200" height="60" rx="8" fill="#17191A" stroke="#2A2E2D"/>
+    <text x="736" y="146" fill="#EEEAE2" font-size="13">no match: 200</text>
+    <text x="736" y="166" fill="#A3AAA6" font-size="11">nothing is stored</text>
+
+    <!-- response 201 -->
+    <rect x="960" y="120" width="200" height="60" rx="8" fill="#17191A" stroke="#2A2E2D"/>
+    <text x="976" y="146" fill="#EEEAE2" font-size="13">match: 201</text>
+    <text x="976" y="166" fill="#A3AAA6" font-size="11">{ incident, bruteForce }</text>
+
+    <!-- supabase -->
+    <rect x="450" y="320" width="470" height="130" rx="8" fill="#17191A" stroke="#2A2E2D"/>
+    <text x="466" y="348" fill="#EEEAE2" font-size="14">Supabase (service-role client)</text>
+    <rect x="466" y="364" width="130" height="70" rx="4" fill="#0C0D0D" stroke="#2A2E2D"/>
+    <text x="478" y="388" fill="#EEEAE2" font-size="12">evidence/</text>
+    <text x="478" y="408" fill="#A3AAA6" font-size="11">raw message</text>
+    <text x="478" y="424" fill="#A3AAA6" font-size="11">&lt;incident&gt;.txt</text>
+    <rect x="610" y="364" width="130" height="70" rx="4" fill="#0C0D0D" stroke="#2A2E2D"/>
+    <text x="622" y="388" fill="#EEEAE2" font-size="12">incidents</text>
+    <text x="622" y="408" fill="#A3AAA6" font-size="11">inc-… rows</text>
+    <text x="622" y="424" fill="#A3AAA6" font-size="11">bf-… rows</text>
+    <rect x="754" y="364" width="150" height="70" rx="4" fill="#0C0D0D" stroke="#2A2E2D"/>
+    <text x="766" y="388" fill="#EEEAE2" font-size="12">counters</text>
+    <text x="766" y="408" fill="#A3AAA6" font-size="11">ip + 5-min window,</text>
+    <text x="766" y="424" fill="#A3AAA6" font-size="11">failed-login only</text>
+
+    <!-- webhook -->
+    <rect x="960" y="320" width="200" height="130" rx="8" fill="#17191A" stroke="#2A2E2D"/>
+    <text x="976" y="348" fill="#EEEAE2" font-size="14">ALERT_WEBHOOK</text>
+    <text x="976" y="376" fill="#A3AAA6" font-size="11">Discord-style</text>
+    <text x="976" y="394" fill="#A3AAA6" font-size="11">{ content }</text>
+    <text x="976" y="422" fill="#A3AAA6" font-size="11">on brute force</text>
+    <text x="976" y="440" fill="#A3AAA6" font-size="11">or a critical rule</text>
+
+    <!-- arrows -->
+    <line x1="190" y1="195" x2="218" y2="195" stroke="#A3AAA6" stroke-width="1.5" marker-end="url(#a)"/>
+    <line x1="420" y1="195" x2="448" y2="195" stroke="#A3AAA6" stroke-width="1.5" marker-end="url(#a)"/>
+    <line x1="670" y1="150" x2="718" y2="150" stroke="#A3AAA6" stroke-width="1.5" marker-end="url(#a)"/>
+    <path d="M560,270 L560,318" fill="none" stroke="#3FBF8A" stroke-width="1.5" marker-end="url(#g)"/>
+    <text x="572" y="300" fill="#A3AAA6" font-size="11">on any finding</text>
+    <path d="M920,385 L958,385" fill="none" stroke="#A3AAA6" stroke-width="1.5" marker-end="url(#a)"/>
+    <path d="M1060,318 L1060,182" fill="none" stroke="#A3AAA6" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="1072" y="260" fill="#A3AAA6" font-size="11">then 201</text>
+
+    <!-- footer note -->
+    <text x="40" y="330" fill="#A3AAA6" font-size="11">source IP = first IPv4</text>
+    <text x="40" y="348" fill="#A3AAA6" font-size="11">in the message, else</text>
+    <text x="40" y="366" fill="#A3AAA6" font-size="11">X-Forwarded-For, x-source,</text>
+    <text x="40" y="384" fill="#A3AAA6" font-size="11">socket address</text>
+    <text x="40" y="412" fill="#A3AAA6" font-size="11">all client-controlled</text>
+    <text x="40" y="430" fill="#A3AAA6" font-size="11">except the socket</text>
+  </g>
+</svg>

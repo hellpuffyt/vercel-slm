@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/hellpuffyt/vercel-slm/actions/workflows/ci.yml/badge.svg)
 
-A small **security log monitor** deployed as a single Vercel serverless function. Clients POST log lines to
+A small **security log monitor** built to run as a single Vercel serverless function. Clients POST log lines to
 `/api/detect`; the function applies a handful of regex rules (failed logins, `admin` logins, SQL-injection
 patterns, scanner user agents), records incidents in Supabase, keeps per-IP failed-login counters to detect
 brute force, and can post alerts to a Discord-style webhook.
@@ -22,7 +22,7 @@ matching, not a SIEM.
 *Terminal capture: `npm test` on the current code. The handler tests run `createHandler` against in-memory fakes for
 Supabase and the webhook; the `Handler exception` line is the deliberately failing fake database in the 500 test.*
 
-A capture of a live `/api/detect` deployment is not included: it needs a Supabase project and Vercel credentials.
+There is no public deployment right now (the earlier Vercel project was removed), so no live `/api/detect` capture is included. Deploying needs a Supabase project and a Vercel account; see [Deploy](#deploy).
 
 ## How a request flows
 

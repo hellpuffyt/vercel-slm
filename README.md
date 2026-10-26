@@ -70,4 +70,4 @@ See [SECURITY.md](SECURITY.md). Report issues via
 [GitHub private advisories](https://github.com/hellpuffyt/vercel-slm/security/advisories/new).
 
 ## License
-This repository does not currently include a license file.
+MIT. See [LICENSE](LICENSE).

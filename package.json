@@ -1,6 +1,7 @@
 {
   "name": "vercel-slm",
   "version": "1.0.0",
+  "license": "MIT",
   "main": "api/detect.js",
   "type": "module",
   "dependencies": {
